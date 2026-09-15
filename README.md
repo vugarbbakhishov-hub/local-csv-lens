@@ -50,6 +50,10 @@ The CSV report holds a short summary block, a blank line and then one row per co
 
 The app is intended for quick inspection rather than editing or validating against a formal CSV schema. Type inference is deliberately conservative.
 
+## Changelog
+
+Release-by-release changes are listed in [CHANGELOG.md](CHANGELOG.md).
+
 ## Contributing
 
 Bug reports and focused improvements are welcome. Please read [CONTRIBUTING.md](CONTRIBUTING.md) before opening a pull request.
