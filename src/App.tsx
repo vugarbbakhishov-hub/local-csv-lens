@@ -1,0 +1,170 @@
+import { useMemo, useState, type ChangeEvent } from 'react'
+import { analyzeDataset, parseCsv, type CsvDataset } from './csv'
+
+const sampleCsv = `name,team,score,active,joined
+Ada Lovelace,Analytics,98,true,2026-01-12
+Grace Hopper,Platform,96,true,2026-02-03
+Linus Torvalds,Platform,,true,2026-02-18
+Margaret Hamilton,Research,99,true,2026-03-01
+Grace Hopper,Platform,96,true,2026-02-03`
+
+const delimiterLabel = { ',': 'Comma', ';': 'Semicolon', '\t': 'Tab' }
+
+function App() {
+  const [csvText, setCsvText] = useState(sampleCsv)
+  const [fileName, setFileName] = useState('sample.csv')
+  const [dataset, setDataset] = useState<CsvDataset>(() => parseCsv(sampleCsv))
+  const [error, setError] = useState('')
+  const analysis = useMemo(() => analyzeDataset(dataset), [dataset])
+
+  const inspect = (text = csvText) => {
+    try {
+      setDataset(parseCsv(text))
+      setError('')
+    } catch (nextError) {
+      setError(nextError instanceof Error ? nextError.message : 'Could not read this CSV.')
+    }
+  }
+
+  const onFileChange = async (event: ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0]
+    if (!file) return
+
+    const text = await file.text()
+    setCsvText(text)
+    setFileName(file.name)
+    inspect(text)
+  }
+
+  const loadSample = () => {
+    setCsvText(sampleCsv)
+    setFileName('sample.csv')
+    inspect(sampleCsv)
+  }
+
+  const clear = () => {
+    setCsvText('')
+    setFileName('Untitled CSV')
+    setError('')
+  }
+
+  return (
+    <main>
+      <header className="site-header">
+        <a className="brand" href="#top" aria-label="Local CSV Lens home">
+          <span className="brand-mark" aria-hidden="true">L</span>
+          <span>Local CSV Lens</span>
+        </a>
+        <span className="privacy-pill"><span aria-hidden="true">●</span> Browser only</span>
+      </header>
+
+      <section className="hero" id="top">
+        <div>
+          <p className="eyebrow">Private by design</p>
+          <h1>Understand a CSV<br />before you trust it.</h1>
+          <p className="hero-copy">
+            Inspect structure, missing values, duplicate rows and column types. Your data stays in
+            this browser tab.
+          </p>
+        </div>
+        <div className="hero-note" aria-label="How it works">
+          <span>01</span>
+          <p>Choose a file or paste CSV text.</p>
+          <span>02</span>
+          <p>Review the instant quality summary.</p>
+        </div>
+      </section>
+
+      <section className="workspace" aria-labelledby="workspace-title">
+        <div className="panel input-panel">
+          <div className="panel-heading">
+            <div>
+              <p className="eyebrow">Input</p>
+              <h2 id="workspace-title">Inspect your data</h2>
+            </div>
+            <span className="file-name" title={fileName}>{fileName}</span>
+          </div>
+
+          <label className="file-drop">
+            <input type="file" accept=".csv,text/csv" onChange={onFileChange} />
+            <span className="upload-icon" aria-hidden="true">↑</span>
+            <span><strong>Choose a CSV file</strong><small>Nothing is uploaded</small></span>
+          </label>
+
+          <label className="textarea-label" htmlFor="csv-input">Or paste CSV text</label>
+          <textarea
+            id="csv-input"
+            value={csvText}
+            onChange={(event) => setCsvText(event.target.value)}
+            spellCheck={false}
+          />
+          {error && <p className="error" role="alert">{error}</p>}
+          <div className="actions">
+            <button className="primary" type="button" onClick={() => inspect()}>Analyze data</button>
+            <button type="button" onClick={loadSample}>Load sample</button>
+            <button type="button" onClick={clear}>Clear</button>
+          </div>
+        </div>
+
+        <div className="panel results-panel" aria-live="polite">
+          <div className="panel-heading">
+            <div>
+              <p className="eyebrow">Overview</p>
+              <h2>Quality snapshot</h2>
+            </div>
+            <span className="delimiter">{delimiterLabel[dataset.delimiter]} separated</span>
+          </div>
+
+          <div className="metric-grid">
+            <article><strong>{analysis.rowCount}</strong><span>Data rows</span></article>
+            <article><strong>{analysis.columnCount}</strong><span>Columns</span></article>
+            <article><strong>{analysis.emptyCellCount}</strong><span>Empty cells</span></article>
+            <article><strong>{analysis.duplicateRowCount}</strong><span>Duplicate rows</span></article>
+          </div>
+
+          <div className="completeness">
+            <div><span>Completeness</span><strong>{analysis.completeness}%</strong></div>
+            <progress max="100" value={analysis.completeness}>{analysis.completeness}%</progress>
+          </div>
+
+          <div className="column-list">
+            <h3>Column profile</h3>
+            {analysis.columns.map((column) => (
+              <article key={column.name}>
+                <div><strong>{column.name}</strong><span>{column.filled} filled · {column.unique} unique</span></div>
+                <span className={`type type-${column.type}`}>{column.type}</span>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="preview-section" aria-labelledby="preview-title">
+        <div className="panel-heading">
+          <div><p className="eyebrow">Preview</p><h2 id="preview-title">First 10 rows</h2></div>
+          <span>{Math.min(dataset.rows.length, 10)} of {dataset.rows.length}</span>
+        </div>
+        <div className="table-wrap">
+          <table>
+            <thead><tr>{dataset.headers.map((header) => <th key={header} scope="col">{header}</th>)}</tr></thead>
+            <tbody>
+              {dataset.rows.slice(0, 10).map((row, rowIndex) => (
+                <tr key={`${rowIndex}-${row.join('|')}`}>
+                  {row.map((cell, cellIndex) => (
+                    <td className={cell === '' ? 'empty-cell' : ''} key={`${cellIndex}-${cell}`}>
+                      {cell || 'Empty'}
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <footer><p>Built for quick, local data checks. No analytics. No uploads.</p></footer>
+    </main>
+  )
+}
+
+export default App
