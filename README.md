@@ -1,6 +1,6 @@
 # Local CSV Lens
 
-Local CSV Lens is a small React and TypeScript utility for checking a CSV before importing it into another tool. It reports rows, columns, empty cells, duplicate rows, completeness and simple column types. All parsing happens in the browser; the selected data is not uploaded.
+Local CSV Lens is a small React and TypeScript utility for checking a CSV before importing it into another tool. It reports rows, columns, empty cells, duplicate rows, completeness and simple column types, and it can save that result as a CSV or JSON report. All parsing happens in the browser; the selected data is not uploaded.
 
 ## Live demo
 
@@ -14,6 +14,7 @@ Local CSV Lens is a small React and TypeScript utility for checking a CSV before
 - Report missing cells, exact duplicate rows and completeness
 - Infer number, date, boolean, text and empty columns
 - Preview the first ten data rows
+- Download the result as a CSV or JSON report, written in the browser
 - Responsive interface with keyboard focus and status feedback
 
 ## Run locally
@@ -35,13 +36,19 @@ npm run build
 
 The parser tests cover delimiter detection, quoted delimiters, escaped quotes, CRLF input, line breaks inside quoted fields, uneven rows, duplicate headers, malformed quotes, completeness, duplicates and type inference.
 
+The report tests cover the CSV summary block, per-column fill rates, quoting of header names that contain a comma or a quote, the JSON structure and the generated file name.
+
 ## Privacy
 
 The app has no backend, analytics or upload endpoint. File contents are read with the browser `File` API and stay in the current tab.
 
+## Reports
+
+The CSV report holds a short summary block, a blank line and then one row per column with type, filled cells, empty cells, unique values and fill rate. The JSON report carries the same numbers in a nested structure and is easier to read from a script. Both are created with a `Blob` in the open tab and never leave the browser.
+
 ## Scope
 
-This first version is intended for quick inspection rather than editing or validating against a formal CSV schema. Type inference is deliberately conservative.
+The app is intended for quick inspection rather than editing or validating against a formal CSV schema. Type inference is deliberately conservative.
 
 ## Contributing
 

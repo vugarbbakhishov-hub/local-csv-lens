@@ -1,5 +1,12 @@
 import { useMemo, useState, type ChangeEvent } from 'react'
 import { analyzeDataset, parseCsv, type CsvDataset } from './csv'
+import {
+  buildReportCsv,
+  buildReportJson,
+  reportFileName,
+  reportMimeType,
+  type ReportFormat,
+} from './report'
 
 const sampleCsv = `name,team,score,active,joined
 Ada Lovelace,Analytics,98,true,2026-01-12
@@ -46,6 +53,25 @@ function App() {
     setCsvText('')
     setFileName('Untitled CSV')
     setError('')
+  }
+
+  const downloadReport = (format: ReportFormat) => {
+    const meta = {
+      fileName,
+      delimiter: dataset.delimiter,
+      generatedAt: new Date().toISOString(),
+    }
+    const content =
+      format === 'csv' ? buildReportCsv(analysis, meta) : buildReportJson(analysis, meta)
+    const url = URL.createObjectURL(new Blob([content], { type: reportMimeType(format) }))
+    const link = document.createElement('a')
+
+    link.href = url
+    link.download = reportFileName(fileName, format)
+    document.body.append(link)
+    link.click()
+    link.remove()
+    URL.revokeObjectURL(url)
   }
 
   return (
@@ -135,6 +161,20 @@ function App() {
                 <span className={`type type-${column.type}`}>{column.type}</span>
               </article>
             ))}
+          </div>
+
+          <div className="report">
+            <div className="actions">
+              <button type="button" onClick={() => downloadReport('csv')}>
+                Download CSV report
+              </button>
+              <button type="button" onClick={() => downloadReport('json')}>
+                Download JSON report
+              </button>
+            </div>
+            <p className="report-note">
+              The report is written in this tab and saved straight to your device.
+            </p>
           </div>
         </div>
       </section>
