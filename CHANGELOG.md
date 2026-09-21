@@ -4,7 +4,7 @@ All notable changes to this project are documented in this file.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [0.3.0] - 2026-09-21
 
 ### Added
 
@@ -38,5 +38,6 @@ and this project uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
   snapshot (rows, columns, empty cells, duplicate rows, completeness), column
   type inference and a preview of the first ten rows.
 
+[0.3.0]: https://github.com/vugarbbakhishov-hub/local-csv-lens/releases/tag/v0.3.0
 [0.2.0]: https://github.com/vugarbbakhishov-hub/local-csv-lens/releases/tag/v0.2.0
 [0.1.0]: https://github.com/vugarbbakhishov-hub/local-csv-lens/releases/tag/v0.1.0
