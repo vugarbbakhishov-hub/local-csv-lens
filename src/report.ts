@@ -1,4 +1,4 @@
-import type { CsvAnalysis, CsvDataset } from './csv'
+import { buildQualityIssues, type CsvAnalysis, type CsvDataset } from './csv'
 
 export type ReportMeta = {
   fileName: string
@@ -64,8 +64,23 @@ export function buildReportCsv(analysis: CsvAnalysis, meta: ReportMeta): string 
       column.fillRatePercent,
     ]),
   ]
+  const issues: Array<Array<string | number>> = [
+    ['Severity', 'Issue', 'Detail'],
+    ...buildQualityIssues(analysis).map((issue) => [
+      issue.severity,
+      issue.title,
+      issue.detail,
+    ]),
+  ]
 
-  return [...summary.map(toCsvRow), '', ...profile.map(toCsvRow)].join('\n')
+  return [
+    ...summary.map(toCsvRow),
+    '',
+    'Issues',
+    ...issues.map(toCsvRow),
+    '',
+    ...profile.map(toCsvRow),
+  ].join('\n')
 }
 
 export function buildReportJson(analysis: CsvAnalysis, meta: ReportMeta): string {
@@ -82,6 +97,7 @@ export function buildReportJson(analysis: CsvAnalysis, meta: ReportMeta): string
         duplicateRowCount: analysis.duplicateRowCount,
         completenessPercent: analysis.completeness,
       },
+      issues: buildQualityIssues(analysis),
       columns: describeColumns(analysis),
     },
     null,

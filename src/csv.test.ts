@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { analyzeDataset, detectDelimiter, parseCsv } from './csv'
+import { analyzeDataset, buildQualityIssues, detectDelimiter, parseCsv } from './csv'
 
 describe('detectDelimiter', () => {
   it('detects semicolon and tab separated input', () => {
@@ -52,6 +52,42 @@ describe('analyzeDataset', () => {
       'number',
       'boolean',
       'date',
+    ])
+  })
+})
+
+describe('buildQualityIssues', () => {
+  it('summarizes missing values, duplicate rows and empty columns', () => {
+    const analysis = analyzeDataset(parseCsv('name,score,notes\nAda,10,\nAda,10,'))
+
+    expect(buildQualityIssues(analysis)).toEqual([
+      {
+        severity: 'warning',
+        title: 'Missing values',
+        detail: '2 cells are blank across 3 columns.',
+      },
+      {
+        severity: 'warning',
+        title: 'Duplicate rows',
+        detail: '1 row repeats an earlier row exactly.',
+      },
+      {
+        severity: 'warning',
+        title: 'Empty columns',
+        detail: 'notes has no values.',
+      },
+    ])
+  })
+
+  it('returns a success issue when the quick scan finds no problems', () => {
+    const analysis = analyzeDataset(parseCsv('name,score\nAda,10\nLinus,11'))
+
+    expect(buildQualityIssues(analysis)).toEqual([
+      {
+        severity: 'success',
+        title: 'No obvious issues',
+        detail: 'No missing values, duplicate rows or empty columns were found in this quick scan.',
+      },
     ])
   })
 })

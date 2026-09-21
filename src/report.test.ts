@@ -22,7 +22,7 @@ const dataset = parseCsv(
 const analysis = analyzeDataset(dataset)
 
 describe('buildReportCsv', () => {
-  it('keeps the summary and the column profile in two readable blocks', () => {
+  it('keeps the summary, issues and column profile in readable blocks', () => {
     const lines = buildReportCsv(analysis, meta).split('\n')
     const blankLine = lines.indexOf('')
 
@@ -37,7 +37,10 @@ describe('buildReportCsv', () => {
       'Duplicate rows,1',
       'Completeness (%),89',
     ])
-    expect(lines[blankLine + 1]).toBe('Column,Type,Filled,Empty,Unique,Fill rate (%)')
+    expect(lines[blankLine + 1]).toBe('Issues')
+    expect(lines).toContain('warning,Missing values,1 cell is blank across 3 columns.')
+    expect(lines).toContain('warning,Duplicate rows,1 row repeats an earlier row exactly.')
+    expect(lines).toContain('Column,Type,Filled,Empty,Unique,Fill rate (%)')
   })
 
   it('reports empty cells and fill rate per column', () => {
@@ -70,6 +73,23 @@ describe('buildReportJson', () => {
       duplicateRowCount: 1,
       completenessPercent: 89,
     })
+    expect(report.issues).toEqual([
+      {
+        severity: 'warning',
+        title: 'Missing values',
+        detail: '1 cell is blank across 3 columns.',
+      },
+      {
+        severity: 'warning',
+        title: 'Duplicate rows',
+        detail: '1 row repeats an earlier row exactly.',
+      },
+      {
+        severity: 'info',
+        title: 'Sparse columns',
+        detail: 'score is below 80% filled.',
+      },
+    ])
     expect(report.columns[1]).toEqual({
       name: 'score',
       type: 'number',

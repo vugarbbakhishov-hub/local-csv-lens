@@ -4,6 +4,14 @@ All notable changes to this project are documented in this file.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+
+- A quality issue checklist that turns the numeric scan into direct review
+  notes for missing values, duplicate rows, empty columns and sparse columns.
+  The same issues are included in the downloadable CSV and JSON reports.
+
 ## [0.2.0] - 2026-09-15
 
 ### Added

@@ -12,6 +12,7 @@ Local CSV Lens is a small React and TypeScript utility for checking a CSV before
 - Detect comma, semicolon and tab delimiters
 - Parse quoted fields, escaped quotes and line breaks inside quoted cells
 - Report missing cells, exact duplicate rows and completeness
+- Highlight quality issues such as missing values, duplicate rows, empty columns and sparse columns
 - Infer number, date, boolean, text and empty columns
 - Preview the first ten data rows
 - Download the result as a CSV or JSON report, written in the browser
@@ -36,7 +37,7 @@ npm run build
 
 The parser tests cover delimiter detection, quoted delimiters, escaped quotes, CRLF input, line breaks inside quoted fields, uneven rows, duplicate headers, malformed quotes, completeness, duplicates and type inference.
 
-The report tests cover the CSV summary block, per-column fill rates, quoting of header names that contain a comma or a quote, the JSON structure and the generated file name.
+The report tests cover the CSV summary block, quality issue block, per-column fill rates, quoting of header names that contain a comma or a quote, the JSON structure and the generated file name.
 
 ## Privacy
 
@@ -44,7 +45,7 @@ The app has no backend, analytics or upload endpoint. File contents are read wit
 
 ## Reports
 
-The CSV report holds a short summary block, a blank line and then one row per column with type, filled cells, empty cells, unique values and fill rate. The JSON report carries the same numbers in a nested structure and is easier to read from a script. Both are created with a `Blob` in the open tab and never leave the browser.
+The CSV report holds a short summary block, a quality issue block, a blank line and then one row per column with type, filled cells, empty cells, unique values and fill rate. The JSON report carries the same numbers and issues in a nested structure and is easier to read from a script. Both are created with a `Blob` in the open tab and never leave the browser.
 
 ## Scope
 

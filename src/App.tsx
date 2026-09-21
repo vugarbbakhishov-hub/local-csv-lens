@@ -1,5 +1,5 @@
 import { useMemo, useState, type ChangeEvent } from 'react'
-import { analyzeDataset, parseCsv, type CsvDataset } from './csv'
+import { analyzeDataset, buildQualityIssues, parseCsv, type CsvDataset } from './csv'
 import {
   buildReportCsv,
   buildReportJson,
@@ -23,6 +23,7 @@ function App() {
   const [dataset, setDataset] = useState<CsvDataset>(() => parseCsv(sampleCsv))
   const [error, setError] = useState('')
   const analysis = useMemo(() => analyzeDataset(dataset), [dataset])
+  const qualityIssues = useMemo(() => buildQualityIssues(analysis), [analysis])
 
   const inspect = (text = csvText) => {
     try {
@@ -151,6 +152,19 @@ function App() {
           <div className="completeness">
             <div><span>Completeness</span><strong>{analysis.completeness}%</strong></div>
             <progress max="100" value={analysis.completeness}>{analysis.completeness}%</progress>
+          </div>
+
+          <div className="issue-list">
+            <h3>Quality issues</h3>
+            {qualityIssues.map((issue) => (
+              <article className={`issue issue-${issue.severity}`} key={`${issue.title}-${issue.detail}`}>
+                <span>{issue.severity}</span>
+                <div>
+                  <strong>{issue.title}</strong>
+                  <p>{issue.detail}</p>
+                </div>
+              </article>
+            ))}
           </div>
 
           <div className="column-list">

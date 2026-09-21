@@ -20,6 +20,12 @@ export type CsvAnalysis = {
   columns: ColumnProfile[]
 }
 
+export type QualityIssue = {
+  severity: 'warning' | 'info' | 'success'
+  title: string
+  detail: string
+}
+
 const delimiters = [',', ';', '\t'] as const
 
 function countDelimiter(line: string, delimiter: string): number {
@@ -169,4 +175,92 @@ export function analyzeDataset(dataset: CsvDataset): CsvAnalysis {
     completeness: totalCells === 0 ? 100 : Math.round(((totalCells - emptyCellCount) / totalCells) * 100),
     columns,
   }
+}
+
+function plural(count: number, singular: string, pluralForm = `${singular}s`): string {
+  return `${count} ${count === 1 ? singular : pluralForm}`
+}
+
+function summarizeColumns(names: string[]): string {
+  if (names.length <= 3) return names.join(', ')
+  return `${names.slice(0, 3).join(', ')} and ${names.length - 3} more`
+}
+
+function verb(count: number, singular: string, pluralForm: string): string {
+  return count === 1 ? singular : pluralForm
+}
+
+/** Turns the numeric analysis into a short review checklist for the UI and reports. */
+export function buildQualityIssues(analysis: CsvAnalysis): QualityIssue[] {
+  const issues: QualityIssue[] = []
+
+  if (analysis.rowCount === 0) {
+    issues.push({
+      severity: 'warning',
+      title: 'No data rows',
+      detail: 'The file only has headers, so there is no row data to inspect.',
+    })
+  }
+
+  if (analysis.emptyCellCount > 0) {
+    issues.push({
+      severity: 'warning',
+      title: 'Missing values',
+      detail: `${plural(analysis.emptyCellCount, 'cell')} ${verb(
+        analysis.emptyCellCount,
+        'is',
+        'are',
+      )} blank across ${plural(
+        analysis.columnCount,
+        'column',
+      )}.`,
+    })
+  }
+
+  if (analysis.duplicateRowCount > 0) {
+    issues.push({
+      severity: 'warning',
+      title: 'Duplicate rows',
+      detail: `${plural(analysis.duplicateRowCount, 'row')} ${verb(
+        analysis.duplicateRowCount,
+        'repeats',
+        'repeat',
+      )} an earlier row exactly.`,
+    })
+  }
+
+  const emptyColumns = analysis.columns
+    .filter((column) => column.type === 'empty')
+    .map((column) => column.name)
+  if (emptyColumns.length > 0) {
+    issues.push({
+      severity: 'warning',
+      title: 'Empty columns',
+      detail: `${summarizeColumns(emptyColumns)} ${emptyColumns.length === 1 ? 'has' : 'have'} no values.`,
+    })
+  }
+
+  const sparseColumns = analysis.columns
+    .filter((column) => column.filled > 0 && analysis.rowCount > 0)
+    .filter((column) => Math.round((column.filled / analysis.rowCount) * 100) < 80)
+    .map((column) => column.name)
+  if (sparseColumns.length > 0) {
+    issues.push({
+      severity: 'info',
+      title: 'Sparse columns',
+      detail: `${summarizeColumns(sparseColumns)} ${
+        sparseColumns.length === 1 ? 'is' : 'are'
+      } below 80% filled.`,
+    })
+  }
+
+  if (issues.length === 0) {
+    issues.push({
+      severity: 'success',
+      title: 'No obvious issues',
+      detail: 'No missing values, duplicate rows or empty columns were found in this quick scan.',
+    })
+  }
+
+  return issues
 }

@@ -64,6 +64,19 @@ button.primary:hover { background: #d75b2d; }
 progress { width: 100%; height: 10px; appearance: none; border: 0; border-radius: 99px; overflow: hidden; }
 progress::-webkit-progress-bar { background: #e6eae5; }
 progress::-webkit-progress-value { background: #e96b3c; }
+.issue-list { margin-top: 24px; display: grid; gap: 9px; }
+.issue-list h3 { font-size: 14px; margin: 0 0 2px; }
+.issue { display: grid; grid-template-columns: auto 1fr; gap: 11px; padding: 13px; border-radius: 14px; border: 1px solid #e8ebe7; background: #fff; }
+.issue > span { align-self: start; border-radius: 999px; padding: 5px 8px; font: 500 10px/1 ui-monospace, SFMono-Regular, Consolas, monospace; text-transform: uppercase; }
+.issue div { display: grid; gap: 4px; }
+.issue strong { font-size: 13px; }
+.issue p { margin: 0; color: #707c74; font-size: 12px; line-height: 1.45; }
+.issue-warning { border-color: #f0d8c7; background: #fff8f5; }
+.issue-warning > span { color: #8a3f1c; background: #fde8d8; }
+.issue-info { border-color: #d9e5f2; background: #f6f9fd; }
+.issue-info > span { color: #284b75; background: #dce9f7; }
+.issue-success { border-color: #d8eadf; background: #f6fbf7; }
+.issue-success > span { color: #28553a; background: #dceee2; }
 .column-list { margin-top: 26px; }
 .column-list h3 { font-size: 14px; margin: 0 0 10px; }
 .column-list article { display: flex; justify-content: space-between; align-items: center; gap: 12px; border-top: 1px solid #e8ebe7; padding: 12px 0; }
