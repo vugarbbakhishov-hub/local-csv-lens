@@ -8,6 +8,9 @@ and this project uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 
 ### Fixed
 
+- Hide outdated analysis and report downloads after editing or clearing input,
+  or when parsing fails. Analyze the current input to restore reports.
+
 - Keep records with explicitly empty cells in row counts, completeness,
   duplicate detection and exported reports. A row such as `,` is data;
   plain blank lines are still skipped. Empty headers receive generated names.

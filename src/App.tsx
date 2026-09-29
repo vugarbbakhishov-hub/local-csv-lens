@@ -22,14 +22,18 @@ function App() {
   const [fileName, setFileName] = useState('sample.csv')
   const [dataset, setDataset] = useState<CsvDataset>(() => parseCsv(sampleCsv))
   const [error, setError] = useState('')
+  const [analyzedText, setAnalyzedText] = useState<string | null>(sampleCsv)
+  const resultsCurrent = analyzedText === csvText && !error
   const analysis = useMemo(() => analyzeDataset(dataset), [dataset])
   const qualityIssues = useMemo(() => buildQualityIssues(analysis), [analysis])
 
   const inspect = (text = csvText) => {
     try {
       setDataset(parseCsv(text))
+      setAnalyzedText(text)
       setError('')
     } catch (nextError) {
+      setAnalyzedText(null)
       setError(nextError instanceof Error ? nextError.message : 'Could not read this CSV.')
     }
   }
@@ -38,10 +42,15 @@ function App() {
     const file = event.target.files?.[0]
     if (!file) return
 
-    const text = await file.text()
-    setCsvText(text)
-    setFileName(file.name)
-    inspect(text)
+    setAnalyzedText(null)
+    try {
+      const text = await file.text()
+      setCsvText(text)
+      setFileName(file.name)
+      inspect(text)
+    } catch {
+      setError('Could not read this file. Choose it again or paste CSV text.')
+    }
   }
 
   const loadSample = () => {
@@ -51,12 +60,14 @@ function App() {
   }
 
   const clear = () => {
+    setAnalyzedText(null)
     setCsvText('')
     setFileName('Untitled CSV')
     setError('')
   }
 
   const downloadReport = (format: ReportFormat) => {
+    if (!resultsCurrent) return
     const meta = {
       fileName,
       delimiter: dataset.delimiter,
@@ -122,7 +133,10 @@ function App() {
           <textarea
             id="csv-input"
             value={csvText}
-            onChange={(event) => setCsvText(event.target.value)}
+            onChange={(event) => {
+              setCsvText(event.target.value)
+              setError('')
+            }}
             spellCheck={false}
           />
           {error && <p className="error" role="alert">{error}</p>}
@@ -134,6 +148,14 @@ function App() {
         </div>
 
         <div className="panel results-panel" aria-live="polite">
+          {!resultsCurrent ? (
+            <>
+              <p className="eyebrow">Overview</p>
+              <h2>Analyze your current data</h2>
+              <p>Run Analyze data to see results and download a report for the current input.</p>
+            </>
+          ) : (
+            <>
           <div className="panel-heading">
             <div>
               <p className="eyebrow">Overview</p>
@@ -190,10 +212,12 @@ function App() {
               The report is written in this tab and saved straight to your device.
             </p>
           </div>
+            </>
+          )}
         </div>
       </section>
 
-      <section className="preview-section" aria-labelledby="preview-title">
+      {resultsCurrent && <section className="preview-section" aria-labelledby="preview-title">
         <div className="panel-heading">
           <div><p className="eyebrow">Preview</p><h2 id="preview-title">First 10 rows</h2></div>
           <span>{Math.min(dataset.rows.length, 10)} of {dataset.rows.length}</span>
@@ -214,7 +238,7 @@ function App() {
             </tbody>
           </table>
         </div>
-      </section>
+      </section>}
 
       <footer><p>Built for quick, local data checks. No analytics. No uploads.</p></footer>
     </main>
