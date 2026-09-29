@@ -118,7 +118,8 @@ export function parseCsv(input: string): CsvDataset {
   const parsedRows = readRows(input, delimiter)
   if (parsedRows.length === 0) throw new Error('The CSV does not contain any rows.')
 
-  const width = Math.max(...parsedRows.map((row) => row.length))
+  let width = 0
+  for (const row of parsedRows) width = Math.max(width, row.length)
   const usedHeaders = new Set<string>()
   const headers = Array.from({ length: width }, (_, index) =>
     uniqueHeader(parsedRows[0]?.[index] ?? '', index, usedHeaders),

@@ -9,6 +9,14 @@ describe('detectDelimiter', () => {
 })
 
 describe('parseCsv', () => {
+  it('reads many short rows while preserving a wider final row', () => {
+    const dataset = parseCsv(`name,score\n${'Ada,10\n'.repeat(150_000)}Linus,11,extra`)
+    expect(dataset.rows).toHaveLength(150_001)
+    expect(dataset.headers).toEqual(['name', 'score', 'Column 3'])
+    expect(dataset.rows[0]).toEqual(['Ada', '10', ''])
+    expect(dataset.rows.at(-1)).toEqual(['Linus', '11', 'extra'])
+  })
+
   it.each([',', ';', '\t'] as const)('preserves empty records separated by %s', (delimiter) => {
     const dataset = parseCsv(`name${delimiter}score\nAda${delimiter}10\n${delimiter}\n`)
     expect(dataset.rows).toEqual([['Ada', '10'], ['', '']])

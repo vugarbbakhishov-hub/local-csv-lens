@@ -8,6 +8,10 @@ and this project uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 
 ### Fixed
 
+- Avoid a JavaScript argument-limit error when reading many short CSV records.
+  A regression test covers 150,001 rows and a wider final row; input still
+  needs to fit in browser memory.
+
 - Hide outdated analysis and report downloads after editing or clearing input,
   or when parsing fails. Analyze the current input to restore reports.
 
