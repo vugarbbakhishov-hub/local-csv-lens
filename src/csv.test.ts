@@ -9,6 +9,22 @@ describe('detectDelimiter', () => {
 })
 
 describe('parseCsv', () => {
+  it.each([',', ';', '\t'] as const)('preserves empty records separated by %s', (delimiter) => {
+    const dataset = parseCsv(`name${delimiter}score\nAda${delimiter}10\n${delimiter}\n`)
+    expect(dataset.rows).toEqual([['Ada', '10'], ['', '']])
+    expect(analyzeDataset(dataset).completeness).toBe(50)
+  })
+
+  it('preserves quoted empty records at EOF while skipping blank lines', () => {
+    expect(parseCsv('name\r\n\r\nAda\r\n""').rows).toEqual([['Ada'], ['']])
+  })
+
+  it('assigns names to empty headers without consuming data', () => {
+    const dataset = parseCsv(',\nAda,10')
+    expect(dataset.headers).toEqual(['Column 1', 'Column 2'])
+    expect(dataset.rows).toEqual([['Ada', '10']])
+  })
+
   it('handles quoted delimiters, escaped quotes and CRLF', () => {
     const dataset = parseCsv('name,note\r\nAda,"Hello, ""CSV"""\r\nLinus,Simple')
 

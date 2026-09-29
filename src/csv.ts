@@ -62,12 +62,14 @@ function readRows(input: string, delimiter: CsvDataset['delimiter']): string[][]
   let row: string[] = []
   let cell = ''
   let inQuotes = false
+  let hasRecordSyntax = false
   const source = input.replace(/^\uFEFF/, '')
 
   for (let index = 0; index < source.length; index += 1) {
     const character = source[index]
 
     if (character === '"') {
+      hasRecordSyntax = true
       if (inQuotes && source[index + 1] === '"') {
         cell += '"'
         index += 1
@@ -75,21 +77,23 @@ function readRows(input: string, delimiter: CsvDataset['delimiter']): string[][]
         inQuotes = !inQuotes
       }
     } else if (character === delimiter && !inQuotes) {
+      hasRecordSyntax = true
       row.push(cell.trim())
       cell = ''
     } else if ((character === '\n' || character === '\r') && !inQuotes) {
       if (character === '\r' && source[index + 1] === '\n') index += 1
       row.push(cell.trim())
-      if (row.some((value) => value.length > 0)) rows.push(row)
+      if (hasRecordSyntax || row.some((value) => value.length > 0)) rows.push(row)
       row = []
       cell = ''
+      hasRecordSyntax = false
     } else {
       cell += character
     }
   }
 
   row.push(cell.trim())
-  if (row.some((value) => value.length > 0)) rows.push(row)
+  if (hasRecordSyntax || row.some((value) => value.length > 0)) rows.push(row)
 
   if (inQuotes) throw new Error('A quoted field is not closed.')
   return rows
