@@ -28,6 +28,25 @@ export type QualityIssue = {
 
 const delimiters = [',', ';', '\t'] as const
 
+function firstRecord(input: string): string {
+  let start = input.charCodeAt(0) === 0xfeff ? 1 : 0
+  let inQuotes = false
+  for (let index = start; index < input.length; index += 1) {
+    const character = input[index]
+    if (character === '"') {
+      if (inQuotes && input[index + 1] === '"') index += 1
+      else inQuotes = !inQuotes
+    } else if (!inQuotes && (character === '\r' || character === '\n')) {
+      const record = input.slice(start, index)
+      // A tab-only record can be a valid header with empty column names.
+      if (record.trim() || record.includes('\t')) return record
+      if (character === '\r' && input[index + 1] === '\n') index += 1
+      start = index + 1
+    }
+  }
+  return input.slice(start)
+}
+
 function countDelimiter(line: string, delimiter: string): number {
   let count = 0
   let inQuotes = false
@@ -49,7 +68,7 @@ function countDelimiter(line: string, delimiter: string): number {
 }
 
 export function detectDelimiter(input: string): CsvDataset['delimiter'] {
-  const firstLogicalLine = input.replace(/^\uFEFF/, '').split(/\r?\n/, 1)[0] ?? ''
+  const firstLogicalLine = firstRecord(input)
   return delimiters.reduce((best, candidate) =>
     countDelimiter(firstLogicalLine, candidate) > countDelimiter(firstLogicalLine, best)
       ? candidate

@@ -2,6 +2,22 @@ import { describe, expect, it } from 'vitest'
 import { analyzeDataset, buildQualityIssues, detectDelimiter, parseCsv } from './csv'
 
 describe('detectDelimiter', () => {
+  it.each([',', ';', '\t'] as const)('detects %s after leading blank lines and a multiline header', (delimiter) => {
+    const input = '\uFEFF\r\n  \r\n"full\r\nname"' + delimiter + 'score\r\nAda' + delimiter + '10'
+    expect(detectDelimiter(input)).toBe(delimiter)
+    expect(parseCsv(input).rows).toEqual([['Ada', '10']])
+  })
+
+  it('does not count delimiters from later data rows', () => {
+    expect(detectDelimiter('name\n"Ada;10;extra"')).toBe(',')
+    expect(detectDelimiter('name;score\rAda,Extra;10')).toBe(';')
+  })
+
+  it('keeps tab-only headers and escaped quotes in the first record', () => {
+    expect(detectDelimiter('\t\nAda\t10')).toBe('\t')
+    expect(detectDelimiter('"say ""hello\nworld""";score\nAda;10')).toBe(';')
+  })
+
   it('detects semicolon and tab separated input', () => {
     expect(detectDelimiter('name;score\nAda;10')).toBe(';')
     expect(detectDelimiter('name\tscore\nAda\t10')).toBe('\t')

@@ -8,6 +8,9 @@ and this project uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 
 ### Fixed
 
+- Detect separators correctly after leading blank lines and inside files with
+  multiline quoted headers, without counting separators from data rows.
+
 - Avoid a JavaScript argument-limit error when reading many short CSV records.
   A regression test covers 150,001 rows and a wider final row; input still
   needs to fit in browser memory.
