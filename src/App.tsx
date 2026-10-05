@@ -240,7 +240,15 @@ function App() {
         </div>
       </section>}
 
-      <footer><p>Built for quick, local data checks. No analytics. No uploads.</p></footer>
+      <footer>
+        <p>Built for quick, local data checks. No analytics. No uploads.</p>
+        <p>
+          <a href="https://github.com/vugarbbakhishov-hub/local-csv-lens/issues/new?template=bug_report.yml">Report a problem</a>
+          {' · '}
+          <a href="https://github.com/vugarbbakhishov-hub/local-csv-lens/issues/new?template=usability_feedback.yml">Share feedback</a>
+        </p>
+        <p>Feedback opens GitHub. Only text you submit is shared; your CSV is not attached.</p>
+      </footer>
     </main>
   )
 }

@@ -17,10 +17,10 @@ body:
     id: sample
     attributes:
       label: Minimal CSV sample
-      description: Provide the smallest anonymized CSV that reproduces the problem.
+      description: For parsing problems, provide the smallest fictional CSV that reproduces the problem. For interface problems, describe the steps instead; a CSV sample is optional.
       render: csv
     validations:
-      required: true
+      required: false
   - type: dropdown
     id: delimiter
     attributes:

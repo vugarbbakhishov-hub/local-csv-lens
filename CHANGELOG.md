@@ -6,6 +6,12 @@ and this project uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 
 ## Unreleased
 
+### Added
+
+- Direct problem-report and feedback links in the app, a structured usability
+  feedback form, and a short sample-based walkthrough with expected results.
+- Interface bugs can be reported without supplying a CSV sample.
+
 ### Fixed
 
 - Detect separators correctly after leading blank lines and inside files with
