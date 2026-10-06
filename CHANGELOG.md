@@ -14,6 +14,10 @@ and this project uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 
 ### Fixed
 
+- Ignore late file reads after choosing another file, editing input, clearing,
+  loading the sample or analyzing the current text. Allow selecting the same
+  file again after clearing or a failed read.
+
 - Detect separators correctly after leading blank lines and inside files with
   multiline quoted headers, without counting separators from data rows.
 

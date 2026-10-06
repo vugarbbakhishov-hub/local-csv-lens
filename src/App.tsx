@@ -1,4 +1,5 @@
 import { useMemo, useState, type ChangeEvent } from 'react'
+import { createFileReadGuard } from './file-read'
 import { analyzeDataset, buildQualityIssues, parseCsv, type CsvDataset } from './csv'
 import {
   buildReportCsv,
@@ -18,6 +19,7 @@ Grace Hopper,Platform,96,true,2026-02-03`
 const delimiterLabel = { ',': 'Comma', ';': 'Semicolon', '\t': 'Tab' }
 
 function App() {
+  const [fileRead] = useState(createFileReadGuard)
   const [csvText, setCsvText] = useState(sampleCsv)
   const [fileName, setFileName] = useState('sample.csv')
   const [dataset, setDataset] = useState<CsvDataset>(() => parseCsv(sampleCsv))
@@ -40,26 +42,29 @@ function App() {
 
   const onFileChange = async (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0]
+    event.target.value = ''
     if (!file) return
 
     setAnalyzedText(null)
-    try {
-      const text = await file.text()
+    setError('')
+    await fileRead.read(file, (text) => {
       setCsvText(text)
       setFileName(file.name)
       inspect(text)
-    } catch {
+    }, () => {
       setError('Could not read this file. Choose it again or paste CSV text.')
-    }
+    })
   }
 
   const loadSample = () => {
+    fileRead.cancel()
     setCsvText(sampleCsv)
     setFileName('sample.csv')
     inspect(sampleCsv)
   }
 
   const clear = () => {
+    fileRead.cancel()
     setAnalyzedText(null)
     setCsvText('')
     setFileName('Untitled CSV')
@@ -134,6 +139,7 @@ function App() {
             id="csv-input"
             value={csvText}
             onChange={(event) => {
+              fileRead.cancel()
               setCsvText(event.target.value)
               setError('')
             }}
@@ -141,7 +147,10 @@ function App() {
           />
           {error && <p className="error" role="alert">{error}</p>}
           <div className="actions">
-            <button className="primary" type="button" onClick={() => inspect()}>Analyze data</button>
+            <button className="primary" type="button" onClick={() => {
+              fileRead.cancel()
+              inspect()
+            }}>Analyze data</button>
             <button type="button" onClick={loadSample}>Load sample</button>
             <button type="button" onClick={clear}>Clear</button>
           </div>
