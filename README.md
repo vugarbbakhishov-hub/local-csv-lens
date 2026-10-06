@@ -59,6 +59,11 @@ The app has no backend, analytics or upload endpoint. File contents are read wit
 
 The CSV report holds a short summary block, a quality issue block, a blank line and then one row per column with type, filled cells, empty cells, unique values and fill rate. The JSON report carries the same numbers and issues in a nested structure and is easier to read from a script. Both are created with a `Blob` in the open tab and never leave the browser.
 
+When you manually change the input, the source label and report source gain an
+`(edited)` marker. The report then describes the current analyzed text, not an
+unchanged copy of the selected file. Loading a file or the sample resets this
+marker; the original file on your device is never modified.
+
 ## Scope
 
 The app is intended for quick inspection rather than editing or validating against a formal CSV schema. Type inference is deliberately conservative.

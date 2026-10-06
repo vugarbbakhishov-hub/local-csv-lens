@@ -22,6 +22,8 @@ function App() {
   const [fileRead] = useState(createFileReadGuard)
   const [csvText, setCsvText] = useState(sampleCsv)
   const [fileName, setFileName] = useState('sample.csv')
+  const [edited, setEdited] = useState(false)
+  const sourceName = edited ? `${fileName} (edited)` : fileName
   const [dataset, setDataset] = useState<CsvDataset>(() => parseCsv(sampleCsv))
   const [error, setError] = useState('')
   const [analyzedText, setAnalyzedText] = useState<string | null>(sampleCsv)
@@ -50,6 +52,7 @@ function App() {
     await fileRead.read(file, (text) => {
       setCsvText(text)
       setFileName(file.name)
+      setEdited(false)
       inspect(text)
     }, () => {
       setError('Could not read this file. Choose it again or paste CSV text.')
@@ -60,6 +63,7 @@ function App() {
     fileRead.cancel()
     setCsvText(sampleCsv)
     setFileName('sample.csv')
+    setEdited(false)
     inspect(sampleCsv)
   }
 
@@ -68,13 +72,14 @@ function App() {
     setAnalyzedText(null)
     setCsvText('')
     setFileName('Untitled CSV')
+    setEdited(false)
     setError('')
   }
 
   const downloadReport = (format: ReportFormat) => {
     if (!resultsCurrent) return
     const meta = {
-      fileName,
+      fileName: sourceName,
       delimiter: dataset.delimiter,
       generatedAt: new Date().toISOString(),
     }
@@ -125,7 +130,7 @@ function App() {
               <p className="eyebrow">Input</p>
               <h2 id="workspace-title">Inspect your data</h2>
             </div>
-            <span className="file-name" title={fileName}>{fileName}</span>
+            <span className="file-name" title={sourceName}>{sourceName}</span>
           </div>
 
           <label className="file-drop">
@@ -141,6 +146,7 @@ function App() {
             onChange={(event) => {
               fileRead.cancel()
               setCsvText(event.target.value)
+              setEdited(true)
               setError('')
             }}
             spellCheck={false}

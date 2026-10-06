@@ -17,6 +17,9 @@ and this project uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 
 ### Fixed
 
+- Mark manually changed input as `(edited)` in the source label and exported
+  CSV/JSON report, so a modified table is not mistaken for the original file.
+
 - Ignore late file reads after choosing another file, editing input, clearing,
   loading the sample or analyzing the current text. Allow selecting the same
   file again after clearing or a failed read.
