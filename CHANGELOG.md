@@ -8,6 +8,9 @@ and this project uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 
 ### Added
 
+- React component regression tests for asynchronous file selection and report
+  visibility, run automatically alongside parser tests in CI.
+
 - Direct problem-report and feedback links in the app, a structured usability
   feedback form, and a short sample-based walkthrough with expected results.
 - Interface bugs can be reported without supplying a CSV sample.

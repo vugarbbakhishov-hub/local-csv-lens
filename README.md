@@ -46,6 +46,11 @@ The parser tests cover delimiter detection, quoted delimiters, escaped quotes, C
 
 The report tests cover the CSV summary block, quality issue block, per-column fill rates, quoting of header names that contain a comma or a quote, the JSON structure and the generated file name.
 
+React component tests run in jsdom and exercise deferred file reads through the
+actual input controls: clearing, loading the sample, editing and analyzing text,
+selecting a newer file, recovering from a read error, and hiding stale reports.
+They complement parser tests; they do not replace real-browser checks of file dialogs.
+
 ## Privacy
 
 The app has no backend, analytics or upload endpoint. File contents are read with the browser `File` API and stay in the current tab.
