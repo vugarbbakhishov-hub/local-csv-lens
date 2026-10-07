@@ -6,6 +6,8 @@ and this project uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 
 ## Unreleased
 
+## [0.4.0] - 2026-10-07
+
 ### Added
 
 - React component regression tests for asynchronous file selection and report
@@ -73,5 +75,6 @@ and this project uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
   type inference and a preview of the first ten rows.
 
 [0.3.0]: https://github.com/vugarbbakhishov-hub/local-csv-lens/releases/tag/v0.3.0
+[0.4.0]: https://github.com/vugarbbakhishov-hub/local-csv-lens/releases/tag/v0.4.0
 [0.2.0]: https://github.com/vugarbbakhishov-hub/local-csv-lens/releases/tag/v0.2.0
 [0.1.0]: https://github.com/vugarbbakhishov-hub/local-csv-lens/releases/tag/v0.1.0

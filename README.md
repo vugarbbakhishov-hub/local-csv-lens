@@ -6,6 +6,9 @@ Local CSV Lens is a small React and TypeScript utility for checking a CSV before
 
 [Open Local CSV Lens](https://vugarbbakhishov-hub.github.io/local-csv-lens/)
 
+Latest release: [v0.4.0](https://github.com/vugarbbakhishov-hub/local-csv-lens/releases/tag/v0.4.0)
+— reliable file switching, corrected CSV edge cases and reports that identify edited input.
+
 ## Try it in two minutes
 
 1. Open the demo and review the built-in sample: **5 rows, 5 columns, 1 empty cell, 1 duplicate row, 96% completeness**.
