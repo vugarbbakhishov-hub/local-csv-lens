@@ -76,6 +76,17 @@ describe('parseCsv', () => {
 })
 
 describe('analyzeDataset', () => {
+  it.each(['00123', '-00123', '+00123', '00.5', '0x10', '0b10', '0o10'])('classifies code-like value %s as text without changing it', (value) => {
+    const dataset = parseCsv(`code\n${value}\n123\n""`)
+    expect(analyzeDataset(dataset).columns[0].type).toBe('text')
+    expect(dataset.rows[0][0]).toBe(value)
+  })
+
+  it('recognizes decimal and scientific notation while ignoring blank cells', () => {
+    const dataset = parseCsv('value\n0\n-0\n+12\n0.5\n-.5\n12.\n1e3\n-2.5E-2\n""')
+    expect(analyzeDataset(dataset).columns[0]).toMatchObject({ type: 'number', filled: 8 })
+  })
+
   it.each(['2026-02-30', '2025-02-29', '1900-02-29', '2026-04-31', '2026-02-30T12:00:00Z'])('keeps impossible calendar date %s as text', (value) => {
     const result = analyzeDataset(parseCsv(`date\n2026-01-01\n${value}\n""`))
     expect(result.columns[0]).toMatchObject({ type: 'text', filled: 2 })

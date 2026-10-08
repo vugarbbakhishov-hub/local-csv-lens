@@ -166,7 +166,10 @@ function isCalendarDate(value: string): boolean {
 function inferType(values: string[]): ColumnProfile['type'] {
   const populated = values.filter(Boolean)
   if (populated.length === 0) return 'empty'
-  if (populated.every((value) => Number.isFinite(Number(value)))) return 'number'
+  if (populated.every((value) =>
+    /^[+-]?(?:(?:0|[1-9]\d*)(?:\.\d*)?|\.\d+)(?:[eE][+-]?\d+)?$/.test(value)
+    && Number.isFinite(Number(value)),
+  )) return 'number'
   if (populated.every((value) => /^(true|false|yes|no)$/i.test(value))) return 'boolean'
   if (populated.every(isCalendarDate)) {
     return 'date'

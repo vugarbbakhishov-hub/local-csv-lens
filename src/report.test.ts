@@ -21,6 +21,12 @@ const dataset = parseCsv(
 )
 const analysis = analyzeDataset(dataset)
 
+it('exports code-like column types consistently without numeric coercion', () => {
+  const result = analyzeDataset(parseCsv('postal\n00123\n00456'))
+  expect(JSON.parse(buildReportJson(result, meta)).columns[0].type).toBe('text')
+  expect(buildReportCsv(result, meta)).toContain('postal,text,2,0,2,100')
+})
+
 describe('buildReportCsv', () => {
   it('keeps the summary, issues and column profile in readable blocks', () => {
     const lines = buildReportCsv(analysis, meta).split('\n')

@@ -8,6 +8,10 @@ and this project uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 
 ### Fixed
 
+- Classify leading-zero codes and hexadecimal/binary/octal literals as text.
+  Numeric inference accepts finite decimal and scientific notation without
+  converting stored cell values; CSV and JSON profiles use the same type.
+
 - Keep impossible calendar dates (including non-leap February 29 and April 31)
   as text rather than accepting JavaScript date normalization. Validate the
   written calendar date before parsing optional time and timezone information.
