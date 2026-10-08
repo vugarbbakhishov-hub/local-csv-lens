@@ -26,10 +26,16 @@ function App() {
   const sourceName = edited ? `${fileName} (edited)` : fileName
   const [dataset, setDataset] = useState<CsvDataset>(() => parseCsv(sampleCsv))
   const [error, setError] = useState('')
+  const [readingFile, setReadingFile] = useState<string | null>(null)
   const [analyzedText, setAnalyzedText] = useState<string | null>(sampleCsv)
   const resultsCurrent = analyzedText === csvText && !error
   const analysis = useMemo(() => analyzeDataset(dataset), [dataset])
   const qualityIssues = useMemo(() => buildQualityIssues(analysis), [analysis])
+
+  const cancelFileRead = () => {
+    fileRead.cancel()
+    setReadingFile(null)
+  }
 
   const inspect = (text = csvText) => {
     try {
@@ -49,18 +55,21 @@ function App() {
 
     setAnalyzedText(null)
     setError('')
+    setReadingFile(file.name)
     await fileRead.read(file, (text) => {
+      setReadingFile(null)
       setCsvText(text)
       setFileName(file.name)
       setEdited(false)
       inspect(text)
     }, () => {
+      setReadingFile(null)
       setError('Could not read this file. Choose it again or paste CSV text.')
     })
   }
 
   const loadSample = () => {
-    fileRead.cancel()
+    cancelFileRead()
     setCsvText(sampleCsv)
     setFileName('sample.csv')
     setEdited(false)
@@ -68,7 +77,7 @@ function App() {
   }
 
   const clear = () => {
-    fileRead.cancel()
+    cancelFileRead()
     setAnalyzedText(null)
     setCsvText('')
     setFileName('Untitled CSV')
@@ -144,7 +153,7 @@ function App() {
             id="csv-input"
             value={csvText}
             onChange={(event) => {
-              fileRead.cancel()
+              cancelFileRead()
               setCsvText(event.target.value)
               setEdited(true)
               setError('')
@@ -154,7 +163,7 @@ function App() {
           {error && <p className="error" role="alert">{error}</p>}
           <div className="actions">
             <button className="primary" type="button" onClick={() => {
-              fileRead.cancel()
+              cancelFileRead()
               inspect()
             }}>Analyze data</button>
             <button type="button" onClick={loadSample}>Load sample</button>
@@ -166,8 +175,17 @@ function App() {
           {!resultsCurrent ? (
             <>
               <p className="eyebrow">Overview</p>
-              <h2>Analyze your current data</h2>
-              <p>Run Analyze data to see results and download a report for the current input.</p>
+              {readingFile !== null ? (
+                <>
+                  <h2>Reading your file</h2>
+                  <p role="status">Reading {readingFile}… Results will appear when the file is ready.</p>
+                </>
+              ) : (
+                <>
+                  <h2>Analyze your current data</h2>
+                  <p>Run Analyze data to see results and download a report for the current input.</p>
+                </>
+              )}
             </>
           ) : (
             <>

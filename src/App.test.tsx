@@ -48,6 +48,44 @@ function readBlob(blob: Blob): Promise<string> {
 }
 
 describe('CSV input and report lifecycle', () => {
+  it('announces the current file until it finishes, ignoring obsolete read failures', async () => {
+    render(<App />)
+    const older = pendingFile('older.csv')
+    const newer = pendingFile('newer.csv')
+    select(older.file)
+    expect(screen.getByRole('status').textContent).toContain('Reading older.csv')
+    select(newer.file)
+    await act(async () => { older.reject(new Error('obsolete')) })
+    expect(screen.getByRole('status').textContent).toContain('Reading newer.csv')
+    expect(screen.queryByText('Analyze your current data')).toBeNull()
+    await act(async () => { newer.resolve('name\nReady') })
+    expect(screen.queryByRole('status')).toBeNull()
+    expect(download()).not.toBeNull()
+  })
+
+  it.each(['Clear', 'Load sample', 'Analyze data', 'edit'])('clears pending file status after %s', async (action) => {
+    render(<App />)
+    const pending = pendingFile()
+    select(pending.file)
+    expect(screen.getByRole('status')).toBeTruthy()
+    if (action === 'edit') fireEvent.change(input(), { target: { value: 'name\nEdited' } })
+    else fireEvent.click(screen.getByRole('button', { name: action }))
+    expect(screen.queryByRole('status')).toBeNull()
+    await act(async () => { pending.resolve('name\nObsolete') })
+    expect(screen.queryByRole('status')).toBeNull()
+    expect(input().value).not.toContain('Obsolete')
+  })
+
+  it('removes the reading status when the current file fails', async () => {
+    render(<App />)
+    const pending = pendingFile()
+    select(pending.file)
+    expect(screen.getByRole('status')).toBeTruthy()
+    await act(async () => { pending.reject(new Error('unreadable')) })
+    expect(screen.queryByRole('status')).toBeNull()
+    expect(screen.getByRole('alert')).toBeTruthy()
+  })
+
   it('exports the selected file summary and marks edited reports in both formats', async () => {
     const saved = captureDownloads()
     render(<App />)

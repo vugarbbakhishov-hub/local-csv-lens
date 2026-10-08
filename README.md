@@ -19,6 +19,7 @@ Latest release: [v0.4.0](https://github.com/vugarbbakhishov-hub/local-csv-lens/r
 ## Features
 
 - Paste CSV text or choose a local `.csv` file
+- See the selected file's reading status until results or a read error are ready
 - Detect comma, semicolon and tab delimiters
 - Parse quoted fields, escaped quotes and line breaks inside quoted cells
 - Report missing cells, exact duplicate rows and completeness

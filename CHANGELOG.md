@@ -6,6 +6,12 @@ and this project uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 
 ## Unreleased
 
+### Fixed
+
+- Announce the selected file while it is being read instead of asking users to
+  analyze the previous input. Clear that status after completion, failure or an
+  input action, and ignore obsolete reads without hiding the newer file's status.
+
 ## [0.4.0] - 2026-10-07
 
 ### Added
