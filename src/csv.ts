@@ -81,6 +81,7 @@ function readRows(input: string, delimiter: CsvDataset['delimiter']): string[][]
   let row: string[] = []
   let cell = ''
   let inQuotes = false
+  let closedQuote = false
   let hasRecordSyntax = false
   const source = input.replace(/^\uFEFF/, '')
 
@@ -92,21 +93,32 @@ function readRows(input: string, delimiter: CsvDataset['delimiter']): string[][]
       if (inQuotes && source[index + 1] === '"') {
         cell += '"'
         index += 1
+      } else if (inQuotes) {
+        inQuotes = false
+        closedQuote = true
       } else {
-        inQuotes = !inQuotes
+        if (closedQuote || cell.trim().length > 0) {
+          throw new SyntaxError(`Unexpected quote at character ${index + 1}.`)
+        }
+        inQuotes = true
       }
     } else if (character === delimiter && !inQuotes) {
       hasRecordSyntax = true
       row.push(cell.trim())
       cell = ''
+      closedQuote = false
     } else if ((character === '\n' || character === '\r') && !inQuotes) {
       if (character === '\r' && source[index + 1] === '\n') index += 1
       row.push(cell.trim())
       if (hasRecordSyntax || row.some((value) => value.length > 0)) rows.push(row)
       row = []
       cell = ''
+      closedQuote = false
       hasRecordSyntax = false
     } else {
+      if (closedQuote && character !== ' ' && character !== '\t') {
+        throw new SyntaxError(`Unexpected text after closing quote at character ${index + 1}.`)
+      }
       cell += character
     }
   }

@@ -48,6 +48,20 @@ function readBlob(blob: Blob): Promise<string> {
 }
 
 describe('CSV input and report lifecycle', () => {
+  it('shows quote-boundary errors and restores reports after correction', () => {
+    render(<App />)
+    fireEvent.change(input(), { target: { value: 'name\n"abc"tail' } })
+    fireEvent.click(screen.getByRole('button', { name: 'Analyze data' }))
+    expect(screen.getByRole('alert').textContent).toContain('after closing quote')
+    expect(download()).toBeNull()
+    expect(screen.queryByRole('table')).toBeNull()
+    fireEvent.change(input(), { target: { value: 'name\n"abc"' } })
+    fireEvent.click(screen.getByRole('button', { name: 'Analyze data' }))
+    expect(screen.queryByRole('alert')).toBeNull()
+    expect(screen.getByRole('cell', { name: 'abc' })).toBeTruthy()
+    expect(download()).not.toBeNull()
+  })
+
   it('announces the current file until it finishes, ignoring obsolete read failures', async () => {
     render(<App />)
     const older = pendingFile('older.csv')

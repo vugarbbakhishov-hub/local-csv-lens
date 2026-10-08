@@ -22,6 +22,7 @@ Latest release: [v0.4.1](https://github.com/vugarbbakhishov-hub/local-csv-lens/r
 - See the selected file's reading status until results or a read error are ready
 - Detect comma, semicolon and tab delimiters
 - Parse quoted fields, escaped quotes and line breaks inside quoted cells
+- Reject malformed quote boundaries with a character-position error; fix the input and analyze again to restore results. Spaces/tabs around quoted fields remain supported.
 - Report missing cells, exact duplicate rows and completeness
 - Highlight quality issues such as missing values, duplicate rows, empty columns and sparse columns
 - Infer number, date, boolean, text and empty columns

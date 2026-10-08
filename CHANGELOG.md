@@ -6,6 +6,12 @@ and this project uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 
 ## Unreleased
 
+### Fixed
+
+- Reject quotes inside unquoted text and text after closing quotes instead of
+  silently merging malformed fields. Show a character-position error and hide
+  stale reports; corrected input restores analysis and downloads.
+
 ## [0.4.1] - 2026-10-08
 
 ### Fixed
