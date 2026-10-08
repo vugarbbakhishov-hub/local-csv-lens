@@ -17,10 +17,18 @@ body:
     id: sample
     attributes:
       label: Minimal CSV sample
-      description: For parsing problems, provide the smallest fictional CSV that reproduces the problem. For interface problems, describe the steps instead; a CSV sample is optional.
+      description: For parsing problems, name a downloadable example (quality-check.csv or type-check.csv) or provide the smallest fictional CSV that reproduces the problem. A CSV sample is optional for interface problems.
       render: csv
     validations:
       required: false
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: Mention whether you pasted text or opened a file, which buttons you used, and whether refreshing changes the result.
+      placeholder: "1. Open type-check.csv using Choose a CSV file.\n2. Edit a value.\n3. Click Analyze data."
+    validations:
+      required: true
   - type: dropdown
     id: delimiter
     attributes:

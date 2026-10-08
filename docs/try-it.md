@@ -32,5 +32,7 @@ hidden. Remove `tail` and analyze again: one row containing `abc` should appear.
 Use **Share feedback** or **Report a problem** in the demo footer. GitHub sign-in
 is required, and submitted feedback is public. Include the example filename,
 browser, expected and actual result, and what you would use the tool for.
+The feedback form lets you select the example by name and record any difference
+from this walkthrough. For a bug, include the actions needed to reproduce it.
 Do not attach private data. These are internal test examples, not evidence of
 external adoption; participation is optional.

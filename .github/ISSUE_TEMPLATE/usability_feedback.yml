@@ -7,6 +7,20 @@ body:
       value: |
         Thanks for trying Local CSV Lens. This is a public GitHub issue.
         Use fictional examples only. Do not include your original CSV, report, or private data.
+        New here? Try the [sample walkthrough](https://github.com/vugarbbakhishov-hub/local-csv-lens/blob/main/docs/try-it.md).
+  - type: dropdown
+    id: example
+    attributes:
+      label: Which example did you try?
+      options:
+        - Built-in sample
+        - quality-check.csv
+        - type-check.csv
+        - Malformed-quote recovery example
+        - My own fictional CSV
+        - Another task
+    validations:
+      required: true
   - type: textarea
     id: task
     attributes:
@@ -37,6 +51,12 @@ body:
     attributes:
       label: Browser and device
       placeholder: Firefox on Windows, Safari on iPhone
+  - type: textarea
+    id: result_difference
+    attributes:
+      label: Did any result differ from the walkthrough?
+      description: Optional. Name the metric or column, its expected result and what the app showed. If everything matched, say so. Do not paste private data.
+      placeholder: "quality-check.csv: expected 67% completeness; the app showed ..."
   - type: checkboxes
     id: privacy
     attributes:

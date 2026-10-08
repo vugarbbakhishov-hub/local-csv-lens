@@ -8,6 +8,9 @@ and this project uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 
 ### Added
 
+- Feedback forms identify the sample tested and expected/actual differences;
+  bug reports request reproduction steps, including file versus pasted input.
+
 - Downloadable fictional CSV examples and a walkthrough with expected metrics,
   column types and error recovery steps. Tests verify the distributed sample data.
 
