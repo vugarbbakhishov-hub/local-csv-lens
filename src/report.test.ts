@@ -28,6 +28,29 @@ it('exports code-like column types consistently without numeric coercion', () =>
 })
 
 describe('buildReportCsv', () => {
+  it.each(['=1+1', '+1', '-1', '@SUM(1)', '  =1', '\ttext', '\rtext', '\ntext', '＝1', '＋1', '－1', '＠SUM(1)'])('prefixes spreadsheet-sensitive text %j', (value) => {
+    expect(escapeCsvValue(value)).toBe(`"'${value}"`)
+  })
+
+  it('protects source names, column names and issue details while preserving JSON', () => {
+    const result = analyzeDataset(parseCsv('=1+1\n""'))
+    const metadata = { ...meta, fileName: '=report.csv' }
+    const csv = buildReportCsv(result, metadata)
+    expect(csv).toContain('Source,"\'=report.csv"')
+    expect(csv).toContain('"\'=1+1",empty,0,1,0,0')
+    expect(csv).toContain('warning,Empty columns,"\'=1+1 has no values."')
+    const json = JSON.parse(buildReportJson(result, metadata))
+    expect(json.source).toBe('=report.csv')
+    expect(json.columns[0].name).toBe('=1+1')
+    expect(json.issues.at(-1).detail).toBe('=1+1 has no values.')
+  })
+
+  it('preserves numeric values and quotes embedded CSV syntax after prefixing', () => {
+    expect(escapeCsvValue(-1)).toBe('-1')
+    expect(escapeCsvValue('=1,"quoted"\nnext')).toBe('"\'=1,""quoted""\nnext"')
+    expect(escapeCsvValue('ordinary text')).toBe('ordinary text')
+  })
+
   it('keeps the summary, issues and column profile in readable blocks', () => {
     const lines = buildReportCsv(analysis, meta).split('\n')
     const blankLine = lines.indexOf('')

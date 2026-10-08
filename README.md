@@ -63,6 +63,14 @@ The app has no backend, analytics or upload endpoint. File contents are read wit
 
 ## Reports
 
+CSV reports prefix formula-like text with an apostrophe and quote the cell,
+including source names, column names and generated issue details. Leading
+`=`, `+`, `-`, `@`, their full-width variants (also after whitespace), and leading
+tabs/line breaks are covered. Numeric values are unchanged. Use JSON for exact
+text without the added prefix. Spreadsheet import settings and saving/reopening
+CSV can affect this mitigation; it is not a universal guarantee. See
+[OWASP CSV Injection](https://community.owasp.org/attacks/CSV_Injection).
+
 The CSV report holds a short summary block, a quality issue block, a blank line and then one row per column with type, filled cells, empty cells, unique values and fill rate. The JSON report carries the same numbers and issues in a nested structure and is easier to read from a script. Both are created with a `Blob` in the open tab and never leave the browser.
 
 When you manually change the input, the source label and report source gain an

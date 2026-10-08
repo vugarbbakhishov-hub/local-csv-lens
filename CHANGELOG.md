@@ -8,6 +8,9 @@ and this project uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 
 ### Fixed
 
+- Prefix and quote formula-like CSV text, including file/column names and issue
+  details. Numeric cells and JSON values stay unchanged; document CSV limitations.
+
 - Classify leading-zero codes and hexadecimal/binary/octal literals as text.
   Numeric inference accepts finite decimal and scientific notation without
   converting stored cell values; CSV and JSON profiles use the same type.

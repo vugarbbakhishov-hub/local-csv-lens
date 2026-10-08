@@ -16,6 +16,10 @@ const delimiterNames: Record<CsvDataset['delimiter'], string> = {
 
 export function escapeCsvValue(value: string | number): string {
   const text = String(value)
+  // Quoting CSV syntax alone does not prevent spreadsheet formula interpretation.
+  if (typeof value === 'string' && (/^[\t\r\n]/.test(text) || /^\s*[=+\-@＝＋－＠]/u.test(text))) {
+    return `"'${text.replace(/"/g, '""')}"`
+  }
   return /["\r\n,]/.test(text) ? `"${text.replace(/"/g, '""')}"` : text
 }
 
