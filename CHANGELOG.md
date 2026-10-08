@@ -6,7 +6,11 @@ and this project uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 
 ## Unreleased
 
+## [0.4.1] - 2026-10-08
+
 ### Fixed
+
+- Explain CSV text prefixes next to the download buttons and offer JSON for exact text.
 
 - Prefix and quote formula-like CSV text, including file/column names and issue
   details. Numeric cells and JSON values stay unchanged; document CSV limitations.

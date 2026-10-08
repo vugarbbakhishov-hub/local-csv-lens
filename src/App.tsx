@@ -243,6 +243,7 @@ function App() {
             </div>
             <p className="report-note">
               The report is written in this tab and saved straight to your device.
+              {' '}CSV adds an apostrophe to formula-like text. Choose JSON for exact names and text.
             </p>
           </div>
             </>
