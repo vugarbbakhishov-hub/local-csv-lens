@@ -76,6 +76,15 @@ describe('parseCsv', () => {
 })
 
 describe('analyzeDataset', () => {
+  it.each(['2026-02-30', '2025-02-29', '1900-02-29', '2026-04-31', '2026-02-30T12:00:00Z'])('keeps impossible calendar date %s as text', (value) => {
+    const result = analyzeDataset(parseCsv(`date\n2026-01-01\n${value}\n""`))
+    expect(result.columns[0]).toMatchObject({ type: 'text', filled: 2 })
+  })
+
+  it.each(['2000-02-29', '2024-02-29', '2026-04-30', '2026-01-01T00:30:00+04:00', '2026-12-31T23:30:00-04:00'])('recognizes valid calendar date %s while ignoring blank cells', (value) => {
+    expect(analyzeDataset(parseCsv(`date\n${value}\n""`)).columns[0]).toMatchObject({ type: 'date', filled: 1 })
+  })
+
   it('reports completeness, duplicates and simple column types', () => {
     const dataset = parseCsv(
       'name,score,active,joined\nAda,10,true,2026-01-02\nAda,10,true,2026-01-02\nLinus,,false,2026-04-03',

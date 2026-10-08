@@ -150,16 +150,25 @@ export function parseCsv(input: string): CsvDataset {
   return { headers, rows, delimiter }
 }
 
+function isCalendarDate(value: string): boolean {
+  const match = /^(\d{4})-(\d{2})-(\d{2})(?:[T\s].*)?$/.exec(value)
+  if (!match) return false
+  const year = Number(match[1])
+  const month = Number(match[2])
+  const day = Number(match[3])
+  const leap = year % 4 === 0 && (year % 100 !== 0 || year % 400 === 0)
+  const days = [31, leap ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
+  // Validate the written date before Date.parse can normalize it into another month.
+  return month >= 1 && month <= 12 && day >= 1 && day <= days[month - 1]
+    && !Number.isNaN(Date.parse(value))
+}
+
 function inferType(values: string[]): ColumnProfile['type'] {
   const populated = values.filter(Boolean)
   if (populated.length === 0) return 'empty'
   if (populated.every((value) => Number.isFinite(Number(value)))) return 'number'
   if (populated.every((value) => /^(true|false|yes|no)$/i.test(value))) return 'boolean'
-  if (
-    populated.every(
-      (value) => /^\d{4}-\d{2}-\d{2}(?:[T\s].*)?$/.test(value) && !Number.isNaN(Date.parse(value)),
-    )
-  ) {
+  if (populated.every(isCalendarDate)) {
     return 'date'
   }
   return 'text'

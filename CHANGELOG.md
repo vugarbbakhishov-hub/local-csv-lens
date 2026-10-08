@@ -8,6 +8,10 @@ and this project uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 
 ### Fixed
 
+- Keep impossible calendar dates (including non-leap February 29 and April 31)
+  as text rather than accepting JavaScript date normalization. Validate the
+  written calendar date before parsing optional time and timezone information.
+
 - Announce the selected file while it is being read instead of asking users to
   analyze the previous input. Clear that status after completion, failure or an
   input action, and ignore obsolete reads without hiding the newer file's status.

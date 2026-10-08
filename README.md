@@ -25,6 +25,7 @@ Latest release: [v0.4.0](https://github.com/vugarbbakhishov-hub/local-csv-lens/r
 - Report missing cells, exact duplicate rows and completeness
 - Highlight quality issues such as missing values, duplicate rows, empty columns and sparse columns
 - Infer number, date, boolean, text and empty columns
+- Validate calendar dates, including leap years; a column with an impossible date is classified as text. Blank cells do not determine the type.
 - Preview the first ten data rows
 - Download the result as a CSV or JSON report, written in the browser
 - Responsive interface with keyboard focus and status feedback
