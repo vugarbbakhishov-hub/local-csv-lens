@@ -21,6 +21,15 @@ const dataset = parseCsv(
 )
 const analysis = analyzeDataset(dataset)
 
+it('exports a sparse warning even when the displayed fill rate rounds to 80%', () => {
+  const rows = Array.from({ length: 200 }, (_, i) => [i < 159 ? String(i + 1) : ''])
+  const result = analyzeDataset({ headers: ['score'], delimiter: ',', rows })
+  const json = JSON.parse(buildReportJson(result, meta))
+  expect(json.columns[0].fillRatePercent).toBe(80)
+  expect(json.issues.some((issue: { title: string }) => issue.title === 'Sparse columns')).toBe(true)
+  expect(buildReportCsv(result, meta)).toContain('info,Sparse columns,score is below 80% filled.')
+})
+
 it('exports code-like column types consistently without numeric coercion', () => {
   const result = analyzeDataset(parseCsv('postal\n00123\n00456'))
   expect(JSON.parse(buildReportJson(result, meta)).columns[0].type).toBe('text')

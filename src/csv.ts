@@ -290,7 +290,7 @@ export function buildQualityIssues(analysis: CsvAnalysis): QualityIssue[] {
 
   const sparseColumns = analysis.columns
     .filter((column) => column.filled > 0 && analysis.rowCount > 0)
-    .filter((column) => Math.round((column.filled / analysis.rowCount) * 100) < 80)
+    .filter((column) => column.filled * 5 < analysis.rowCount * 4)
     .map((column) => column.name)
   if (sparseColumns.length > 0) {
     issues.push({

@@ -217,6 +217,7 @@ function App() {
 
           <div className="issue-list">
             <h3>Quality issues</h3>
+            <p className="report-note">Sparse columns are below 80% filled before rounding. Displayed percentages are rounded.</p>
             {qualityIssues.map((issue) => (
               <article className={`issue issue-${issue.severity}`} key={`${issue.title}-${issue.detail}`}>
                 <span>{issue.severity}</span>

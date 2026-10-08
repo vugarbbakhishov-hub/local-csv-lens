@@ -28,6 +28,7 @@ For downloadable fictional CSVs and exact expected results, follow the
 - Reject malformed quote boundaries with a character-position error; fix the input and analyze again to restore results. Spaces/tabs around quoted fields remain supported.
 - Report missing cells, exact duplicate rows and completeness
 - Highlight quality issues such as missing values, duplicate rows, empty columns and sparse columns
+- Evaluate the sparse-column threshold before rounding: 159/200 filled cells (79.5%) is below 80%, even though the report's whole-number fill rate displays 80%.
 - Infer number, date, boolean, text and empty columns
 - Numeric inference accepts decimal and scientific notation. Leading-zero codes and hexadecimal/binary/octal literals remain text; profiling never converts stored cell values.
 - Validate calendar dates, including leap years; a column with an impossible date is classified as text. Blank cells do not determine the type.

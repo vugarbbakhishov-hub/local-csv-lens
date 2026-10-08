@@ -125,6 +125,12 @@ describe('analyzeDataset', () => {
 })
 
 describe('buildQualityIssues', () => {
+  it.each([[159, true], [160, false], [161, false], [0, false]] as const)('uses the exact sparse threshold for %i of 200 filled cells', (filled, sparse) => {
+    const rows = Array.from({ length: 200 }, (_, i) => [i < filled ? String(i + 1) : ''])
+    const report = analyzeDataset({ headers: ['score'], delimiter: ',', rows })
+    expect(buildQualityIssues(report).some((issue) => issue.title === 'Sparse columns')).toBe(sparse)
+  })
+
   it('summarizes missing values, duplicate rows and empty columns', () => {
     const analysis = analyzeDataset(parseCsv('name,score,notes\nAda,10,\nAda,10,'))
 

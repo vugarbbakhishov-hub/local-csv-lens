@@ -16,6 +16,9 @@ and this project uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 
 ### Fixed
 
+- Evaluate sparse columns using exact counts before rounding percentages, so
+  79.5% filled still triggers the below-80% notice in the UI and exported reports.
+
 - Reject quotes inside unquoted text and text after closing quotes instead of
   silently merging malformed fields. Show a character-position error and hide
   stale reports; corrected input restores analysis and downloads.
