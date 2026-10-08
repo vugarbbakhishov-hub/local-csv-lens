@@ -149,6 +149,12 @@ function App() {
           </label>
 
           <label className="textarea-label" htmlFor="csv-input">Or paste CSV text</label>
+          <p className="report-note">
+            No file handy? Download fictional examples and open them above:{' '}
+            <a href="./samples/quality-check.csv" download>Missing values and duplicates</a>
+            {' · '}<a href="./samples/type-check.csv" download>Codes and dates</a>.
+            {' '}<a href="https://github.com/vugarbbakhishov-hub/local-csv-lens/blob/main/docs/try-it.md">See expected results</a>.
+          </p>
           <textarea
             id="csv-input"
             value={csvText}

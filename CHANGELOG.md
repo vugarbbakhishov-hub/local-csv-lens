@@ -6,6 +6,11 @@ and this project uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 
 ## Unreleased
 
+### Added
+
+- Downloadable fictional CSV examples and a walkthrough with expected metrics,
+  column types and error recovery steps. Tests verify the distributed sample data.
+
 ### Fixed
 
 - Reject quotes inside unquoted text and text after closing quotes instead of

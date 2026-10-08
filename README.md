@@ -11,6 +11,9 @@ Latest release: [v0.4.1](https://github.com/vugarbbakhishov-hub/local-csv-lens/r
 
 ## Try it in two minutes
 
+For downloadable fictional CSVs and exact expected results, follow the
+[sample walkthrough](docs/try-it.md). The demo links to both files beside its input.
+
 1. Open the demo and review the built-in sample: **5 rows, 5 columns, 1 empty cell, 1 duplicate row, 96% completeness**.
 2. Download a JSON report and compare its summary with the screen.
 3. Edit a value. Results and downloads stay hidden until you choose **Analyze data** again.
