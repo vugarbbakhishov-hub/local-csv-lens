@@ -1,8 +1,11 @@
 # Try Local CSV Lens with fictional data
 
 Open the [live demo](https://vugarbbakhishov-hub.github.io/local-csv-lens/).
-Download either example using the links beside the input, then choose that file
-with **Choose a CSV file**. No private data is needed.
+Choose **Try missing values** or **Try codes and dates** beside the input. The
+example is loaded and analyzed immediately. No private data is needed.
+
+To test file selection instead, download either example using the links beside
+the input, then open it with **Choose a CSV file**. Both paths use the same data.
 
 | Example | Data rows | Columns | Empty cells | Duplicate rows | Completeness |
 | --- | ---: | ---: | ---: | ---: | ---: |

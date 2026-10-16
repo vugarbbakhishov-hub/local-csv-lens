@@ -1,5 +1,7 @@
 import { useMemo, useState, type ChangeEvent } from 'react'
 import { createFileReadGuard } from './file-read'
+import qualitySample from '../public/samples/quality-check.csv?raw'
+import typeSample from '../public/samples/type-check.csv?raw'
 import { analyzeDataset, buildQualityIssues, parseCsv, type CsvDataset } from './csv'
 import {
   buildReportCsv,
@@ -68,12 +70,12 @@ function App() {
     })
   }
 
-  const loadSample = () => {
+  const loadSample = (text = sampleCsv, name = 'sample.csv') => {
     cancelFileRead()
-    setCsvText(sampleCsv)
-    setFileName('sample.csv')
+    setCsvText(text)
+    setFileName(name)
     setEdited(false)
-    inspect(sampleCsv)
+    inspect(text)
   }
 
   const clear = () => {
@@ -148,13 +150,17 @@ function App() {
             <span><strong>Choose a CSV file</strong><small>Nothing is uploaded</small></span>
           </label>
 
-          <label className="textarea-label" htmlFor="csv-input">Or paste CSV text</label>
+          <div className="actions" role="group" aria-label="Try a fictional CSV">
+            <button type="button" onClick={() => loadSample(qualitySample, 'quality-check.csv')}>Try missing values</button>
+            <button type="button" onClick={() => loadSample(typeSample, 'type-check.csv')}>Try codes and dates</button>
+          </div>
           <p className="report-note">
-            No file handy? Download fictional examples and open them above:{' '}
+            Try a fictional example above, or download the same CSV:{' '}
             <a href="./samples/quality-check.csv" download>Missing values and duplicates</a>
             {' · '}<a href="./samples/type-check.csv" download>Codes and dates</a>.
             {' '}<a href="https://github.com/vugarbbakhishov-hub/local-csv-lens/blob/main/docs/try-it.md">See expected results</a>.
           </p>
+          <label className="textarea-label" htmlFor="csv-input">Or paste CSV text</label>
           <textarea
             id="csv-input"
             value={csvText}
@@ -172,7 +178,7 @@ function App() {
               cancelFileRead()
               inspect()
             }}>Analyze data</button>
-            <button type="button" onClick={loadSample}>Load sample</button>
+            <button type="button" onClick={() => loadSample()}>Load sample</button>
             <button type="button" onClick={clear}>Clear</button>
           </div>
         </div>
@@ -289,6 +295,7 @@ function App() {
           <a href="https://github.com/vugarbbakhishov-hub/local-csv-lens/issues/new?template=usability_feedback.yml">Share feedback</a>
         </p>
         <p>Feedback opens GitHub. Only text you submit is shared; your CSV is not attached.</p>
+        <p>Need repeatable checks in a terminal or CI? Try the companion <a href="https://github.com/vugarbbakhishov-hub/csv-quality">csv-quality CLI</a>.</p>
       </footer>
     </main>
   )

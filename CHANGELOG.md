@@ -8,6 +8,11 @@ and this project uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 
 ### Added
 
+- Open and analyze the two fictional CSV examples with one click. Loading an
+  example clears old errors, resets the source label and ignores pending file
+  reads; report downloads use the selected example's name. Link to the companion
+  `csv-quality` CLI for repeatable terminal and CI checks.
+
 - Feedback forms identify the sample tested and expected/actual differences;
   bug reports request reproduction steps, including file versus pasted input.
 
