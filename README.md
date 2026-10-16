@@ -11,8 +11,10 @@ Latest release: [v0.4.1](https://github.com/vugarbbakhishov-hub/local-csv-lens/r
 
 ## Try it in two minutes
 
-For downloadable fictional CSVs and exact expected results, follow the
-[sample walkthrough](docs/try-it.md). The demo links to both files beside its input.
+Choose **Try missing values** or **Try codes and dates** to analyze a fictional
+CSV immediately, without downloading or selecting a file. The same CSVs are
+also available as downloads beside the input. For exact expected results,
+follow the [sample walkthrough](docs/try-it.md).
 
 1. Open the demo and review the built-in sample: **5 rows, 5 columns, 1 empty cell, 1 duplicate row, 96% completeness**.
 2. Download a JSON report and compare its summary with the screen.
@@ -21,6 +23,7 @@ For downloadable fictional CSVs and exact expected results, follow the
 
 ## Features
 
+- Try built-in examples for missing values, duplicates, leading-zero codes and invalid dates with one click
 - Paste CSV text or choose a local `.csv` file
 - See the selected file's reading status until results or a read error are ready
 - Detect comma, semicolon and tab delimiters
@@ -86,6 +89,11 @@ marker; the original file on your device is never modified.
 ## Scope
 
 The app is intended for quick inspection rather than editing or validating against a formal CSV schema. Type inference is deliberately conservative.
+
+For repeatable checks in a terminal or CI, use the companion
+[csv-quality library and CLI](https://github.com/vugarbbakhishov-hub/csv-quality).
+It supports completeness and duplicate-row gates that return a failing exit code
+when an export does not meet your thresholds.
 
 ## Changelog
 
