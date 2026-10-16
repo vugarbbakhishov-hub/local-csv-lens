@@ -48,6 +48,35 @@ function readBlob(blob: Blob): Promise<string> {
 }
 
 describe('CSV input and report lifecycle', () => {
+  it.each([
+    ['Try missing values', 'quality-check.csv', 3, 2, 2, 1, 67, ['text', 'number']],
+    ['Try codes and dates', 'type-check.csv', 2, 3, 0, 0, 100, ['text', 'text', 'number']],
+  ] as const)('loads and exports %s without a file chooser', async (button, name, rows, columns, empty, duplicates, completeness, types) => {
+    const saved = captureDownloads()
+    render(<App />)
+    fireEvent.change(input(), { target: { value: 'name\n"unfinished' } })
+    fireEvent.click(screen.getByRole('button', { name: 'Analyze data' }))
+    expect(screen.getByRole('alert')).toBeTruthy()
+    fireEvent.click(screen.getByRole('button', { name: button }))
+    expect(screen.queryByRole('alert')).toBeNull()
+    expect(screen.queryByText(/\(edited\)/)).toBeNull()
+    expect(screen.getByText(name)).toBeTruthy()
+    expect(screen.getByRole('table')).toBeTruthy()
+    fireEvent.click(screen.getByRole('button', { name: 'Download JSON report' }))
+    const report = JSON.parse(await readBlob(saved.blobs[0]))
+    expect(report.source).toBe(name)
+    expect(report.summary).toEqual({ rowCount: rows, columnCount: columns, emptyCellCount: empty, duplicateRowCount: duplicates, completenessPercent: completeness })
+    expect(report.columns.map((column: { type: string }) => column.type)).toEqual(types)
+    expect(saved.filenames).toEqual([name.replace('.csv', '-report.json')])
+
+    fireEvent.change(input(), { target: { value: `${input().value}\n` } })
+    expect(download()).toBeNull()
+    fireEvent.click(screen.getByRole('button', { name: 'Load sample' }))
+    expect(screen.getByText('sample.csv')).toBeTruthy()
+    expect(input().value).toContain('Ada Lovelace')
+    expect(download()).not.toBeNull()
+  })
+
   it('shows quote-boundary errors and restores reports after correction', () => {
     render(<App />)
     fireEvent.change(input(), { target: { value: 'name\n"abc"tail' } })
@@ -77,7 +106,7 @@ describe('CSV input and report lifecycle', () => {
     expect(download()).not.toBeNull()
   })
 
-  it.each(['Clear', 'Load sample', 'Analyze data', 'edit'])('clears pending file status after %s', async (action) => {
+  it.each(['Clear', 'Load sample', 'Try missing values', 'Try codes and dates', 'Analyze data', 'edit'])('clears pending file status after %s', async (action) => {
     render(<App />)
     const pending = pendingFile()
     select(pending.file)
