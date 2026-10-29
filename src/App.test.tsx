@@ -47,6 +47,78 @@ function readBlob(blob: Blob): Promise<string> {
   })
 }
 
+const multiPageCsv = ['name,note', ...Array.from({ length: 23 }, (_, index) => {
+  const number = index + 1
+  const note = number === 12 ? '"line one\nline two"' : number === 22 ? '' : `note ${number}`
+  return `Item ${number},${note}`
+})].join('\n\n')
+
+describe('CSV preview pagination', () => {
+  it('browses every record with stable row numbers while reports cover the complete dataset', async () => {
+    const saved = captureDownloads()
+    render(<App />)
+    fireEvent.change(input(), { target: { value: multiPageCsv } })
+    fireEvent.click(screen.getByRole('button', { name: 'Analyze data' }))
+    const previous = screen.getByRole('button', { name: 'Previous rows' }) as HTMLButtonElement
+    const next = screen.getByRole('button', { name: 'Next rows' }) as HTMLButtonElement
+    expect(previous.disabled).toBe(true)
+    expect(screen.getByText('Rows 1–10 of 23')).toBeTruthy()
+    expect(screen.getAllByRole('rowheader').map((cell) => cell.textContent)).toEqual(
+      Array.from({ length: 10 }, (_, index) => String(index + 1)),
+    )
+    expect(screen.queryByRole('cell', { name: 'Item 11' })).toBeNull()
+    fireEvent.click(next)
+    expect(screen.getByText('Rows 11–20 of 23')).toBeTruthy()
+    expect(screen.getByRole('rowheader', { name: '12' }).closest('tr')?.textContent).toContain('line one\nline two')
+    expect(previous.disabled).toBe(false)
+    fireEvent.click(next)
+    expect(screen.getByText('Rows 21–23 of 23')).toBeTruthy()
+    expect(screen.getAllByRole('rowheader').map((cell) => cell.textContent)).toEqual(['21', '22', '23'])
+    expect(screen.getByRole('rowheader', { name: '22' }).closest('tr')?.textContent).toContain('Empty')
+    expect(next.disabled).toBe(true)
+    fireEvent.click(screen.getByRole('button', { name: 'Download JSON report' }))
+    const report = JSON.parse(await readBlob(saved.blobs[0]))
+    expect(report.summary).toMatchObject({ rowCount: 23, columnCount: 2, emptyCellCount: 1 })
+    expect(report.columns.map((column: { name: string }) => column.name)).toEqual(['name', 'note'])
+    fireEvent.click(previous)
+    expect(screen.getByText('Rows 11–20 of 23')).toBeTruthy()
+    fireEvent.click(screen.getByRole('button', { name: 'Load sample' }))
+    expect(screen.getByText('Rows 1–5 of 5')).toBeTruthy()
+    expect(previous.disabled).toBe(true)
+  })
+
+  it('resets the page after a new file and after correcting invalid input', async () => {
+    render(<App />)
+    fireEvent.change(input(), { target: { value: multiPageCsv } })
+    fireEvent.click(screen.getByRole('button', { name: 'Analyze data' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Next rows' }))
+    const file = pendingFile('short.csv')
+    select(file.file)
+    expect(screen.queryByRole('table')).toBeNull()
+    await act(async () => { file.resolve('name\nFresh') })
+    expect(screen.getByText('Rows 1–1 of 1')).toBeTruthy()
+    expect(screen.getByRole('rowheader', { name: '1' })).toBeTruthy()
+    fireEvent.change(input(), { target: { value: 'name\n"unfinished' } })
+    fireEvent.click(screen.getByRole('button', { name: 'Analyze data' }))
+    expect(screen.queryByRole('group', { name: 'Preview pagination' })).toBeNull()
+    fireEvent.change(input(), { target: { value: 'name\nFixed' } })
+    fireEvent.click(screen.getByRole('button', { name: 'Analyze data' }))
+    expect(screen.getByText('Rows 1–1 of 1')).toBeTruthy()
+    expect(screen.getByRole('cell', { name: 'Fixed' })).toBeTruthy()
+  })
+
+  it.each([0, 10, 20])('does not offer an empty extra page for %i data rows', (count) => {
+    render(<App />)
+    fireEvent.change(input(), { target: { value: ['name', ...Array.from({ length: count }, (_, i) => `Item ${i + 1}`)].join('\n') } })
+    fireEvent.click(screen.getByRole('button', { name: 'Analyze data' }))
+    const next = screen.getByRole('button', { name: 'Next rows' }) as HTMLButtonElement
+    if (count === 20) fireEvent.click(next)
+    expect(next.disabled).toBe(true)
+    expect(screen.queryAllByRole('rowheader')).toHaveLength(count === 0 ? 0 : 10)
+    if (count === 0) expect(screen.getByText('No data rows to preview.')).toBeTruthy()
+  })
+})
+
 describe('CSV input and report lifecycle', () => {
   it.each([
     ['Try missing values', 'quality-check.csv', 3, 2, 2, 1, 67, ['text', 'number']],

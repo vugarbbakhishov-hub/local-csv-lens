@@ -6,6 +6,12 @@ and this project uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 
 ## Unreleased
 
+### Added
+
+- Browse the entire data preview with previous/next controls, ten records per
+  page and stable data-row numbers. Reset to page one after a new analysis,
+  sample or file. Summary metrics and reports still cover the whole dataset.
+
 ## [0.5.0] - 2026-10-29
 
 ### Added

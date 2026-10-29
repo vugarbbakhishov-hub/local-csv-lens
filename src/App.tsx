@@ -19,6 +19,7 @@ Margaret Hamilton,Research,99,true,2026-03-01
 Grace Hopper,Platform,96,true,2026-02-03`
 
 const delimiterLabel = { ',': 'Comma', ';': 'Semicolon', '\t': 'Tab' }
+const previewPageSize = 10
 
 function App() {
   const [fileRead] = useState(createFileReadGuard)
@@ -30,9 +31,13 @@ function App() {
   const [error, setError] = useState('')
   const [readingFile, setReadingFile] = useState<string | null>(null)
   const [analyzedText, setAnalyzedText] = useState<string | null>(sampleCsv)
+  const [previewPage, setPreviewPage] = useState(0)
   const resultsCurrent = analyzedText === csvText && !error
   const analysis = useMemo(() => analyzeDataset(dataset), [dataset])
   const qualityIssues = useMemo(() => buildQualityIssues(analysis), [analysis])
+  const previewStart = previewPage * previewPageSize
+  const previewEnd = Math.min(previewStart + previewPageSize, dataset.rows.length)
+  const previewPageCount = Math.max(1, Math.ceil(dataset.rows.length / previewPageSize))
 
   const cancelFileRead = () => {
     fileRead.cancel()
@@ -42,6 +47,7 @@ function App() {
   const inspect = (text = csvText) => {
     try {
       setDataset(parseCsv(text))
+      setPreviewPage(0)
       setAnalyzedText(text)
       setError('')
     } catch (nextError) {
@@ -266,15 +272,36 @@ function App() {
 
       {resultsCurrent && <section className="preview-section" aria-labelledby="preview-title">
         <div className="panel-heading">
-          <div><p className="eyebrow">Preview</p><h2 id="preview-title">First 10 rows</h2></div>
-          <span>{Math.min(dataset.rows.length, 10)} of {dataset.rows.length}</span>
+          <div><p className="eyebrow">Preview</p><h2 id="preview-title">Data preview</h2></div>
+          <span aria-live="polite" aria-atomic="true">
+            {dataset.rows.length === 0
+              ? 'No data rows to preview.'
+              : `Rows ${previewStart + 1}–${previewEnd} of ${dataset.rows.length}`}
+          </span>
         </div>
-        <div className="table-wrap">
-          <table>
-            <thead><tr>{dataset.headers.map((header) => <th key={header} scope="col">{header}</th>)}</tr></thead>
+        <div className="pagination" role="group" aria-label="Preview pagination">
+          <button
+            type="button"
+            disabled={previewPage === 0}
+            onClick={() => setPreviewPage((page) => Math.max(0, page - 1))}
+            aria-controls="preview-table"
+          >Previous rows</button>
+          <span>Page {previewPage + 1} of {previewPageCount}</span>
+          <button
+            type="button"
+            disabled={previewPage + 1 >= previewPageCount}
+            onClick={() => setPreviewPage((page) => Math.min(previewPageCount - 1, page + 1))}
+            aria-controls="preview-table"
+          >Next rows</button>
+        </div>
+        <p className="report-note">Data row numbers exclude the header and blank lines. Multiline cells count as one record. Reports include all rows.</p>
+        <div className="table-wrap" role="region" aria-label="Scrollable data preview" tabIndex={0}>
+          <table id="preview-table" aria-labelledby="preview-title">
+            <thead><tr><th scope="col">Data row</th>{dataset.headers.map((header) => <th key={header} scope="col">{header}</th>)}</tr></thead>
             <tbody>
-              {dataset.rows.slice(0, 10).map((row, rowIndex) => (
-                <tr key={`${rowIndex}-${row.join('|')}`}>
+              {dataset.rows.slice(previewStart, previewEnd).map((row, rowIndex) => (
+                <tr key={previewStart + rowIndex}>
+                  <th scope="row">{previewStart + rowIndex + 1}</th>
                   {row.map((cell, cellIndex) => (
                     <td className={cell === '' ? 'empty-cell' : ''} key={`${cellIndex}-${cell}`}>
                       {cell || 'Empty'}

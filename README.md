@@ -35,7 +35,7 @@ follow the [sample walkthrough](docs/try-it.md).
 - Infer number, date, boolean, text and empty columns
 - Numeric inference accepts decimal and scientific notation. Leading-zero codes and hexadecimal/binary/octal literals remain text; profiling never converts stored cell values.
 - Validate calendar dates, including leap years; a column with an impossible date is classified as text. Blank cells do not determine the type.
-- Preview the first ten data rows
+- Browse all data rows in pages of ten, with row numbers and previous/next controls
 - Download the result as a CSV or JSON report, written in the browser
 - Responsive interface with keyboard focus and status feedback
 
@@ -64,6 +64,18 @@ React component tests run in jsdom and exercise deferred file reads through the
 actual input controls: clearing, loading the sample, editing and analyzing text,
 selecting a newer file, recovering from a read error, and hiding stale reports.
 They complement parser tests; they do not replace real-browser checks of file dialogs.
+
+## Browse the data preview
+
+After analyzing input, use **Next rows** and **Previous rows** below the preview
+heading to inspect the whole dataset, ten records at a time. The range shows
+which rows are visible. A new analysis, sample or file starts at the first page.
+
+**Data row** numbers count parsed records after the header. They are not source
+file line numbers: blank lines are skipped and a quoted multiline cell still
+belongs to one record. The row-number column is only a navigation aid; it is
+not added to your CSV or the column profile. The summary and downloaded reports
+always describe all analyzed rows, regardless of the current preview page.
 
 ## Privacy
 
