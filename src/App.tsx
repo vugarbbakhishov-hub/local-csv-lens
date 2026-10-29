@@ -1,7 +1,7 @@
 import { useMemo, useState, type ChangeEvent } from 'react'
 import { createFileReadGuard } from './file-read'
-import qualitySample from '../public/samples/quality-check.csv?raw'
-import typeSample from '../public/samples/type-check.csv?raw'
+import qualitySample from '/samples/quality-check.csv?raw'
+import typeSample from '/samples/type-check.csv?raw'
 import { analyzeDataset, buildQualityIssues, parseCsv, type CsvDataset } from './csv'
 import {
   buildReportCsv,

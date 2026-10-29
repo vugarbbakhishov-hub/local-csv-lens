@@ -1,7 +1,7 @@
 import { expect, it } from 'vitest'
 import { analyzeDataset, parseCsv } from './csv'
-import qualitySample from '../public/samples/quality-check.csv?raw'
-import typeSample from '../public/samples/type-check.csv?raw'
+import qualitySample from '/samples/quality-check.csv?raw'
+import typeSample from '/samples/type-check.csv?raw'
 
 it.each([
   ['quality-check.csv', 3, 2, 2, 1, 67, ['text', 'number']],

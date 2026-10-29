@@ -48,6 +48,15 @@ npm run dev
 
 Then open the local URL printed by Vite.
 
+The fictional examples live in `public/samples/`. The app and sample tests import
+them through `/samples/*.csv?raw`, following Vite's
+[public asset paths](https://vite.dev/guide/assets#the-public-directory).
+`assetsInclude` in `vite.config.ts` registers CSV files as assets. Downloads
+keep their existing filenames. Edit the CSV files there to update
+both the one-click examples and downloads together.
+The test configuration maps `/samples` to that same directory for Node-based
+tests on Windows and other platforms.
+
 ## Validation
 
 ```bash

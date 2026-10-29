@@ -6,6 +6,12 @@ and this project uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 
 ## Unreleased
 
+### Fixed
+
+- Import fictional CSV samples through their public asset paths so the Vite
+  development server no longer warns about explicit `/public/` imports. Keep
+  one shared copy for one-click examples, downloads and sample tests.
+
 ### Added
 
 - Browse the entire data preview with previous/next controls, ten records per
