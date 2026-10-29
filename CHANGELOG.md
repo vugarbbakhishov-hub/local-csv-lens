@@ -6,6 +6,8 @@ and this project uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 
 ## Unreleased
 
+## [0.5.0] - 2026-10-29
+
 ### Added
 
 - Open and analyze the two fictional CSV examples with one click. Loading an
