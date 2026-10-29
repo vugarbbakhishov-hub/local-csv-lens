@@ -11,6 +11,14 @@ and this project uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 - Import fictional CSV samples through their public asset paths so the Vite
   development server no longer warns about explicit `/public/` imports. Keep
   one shared copy for one-click examples, downloads and sample tests.
+- Declare Node.js types for the Vite configuration so fresh CI installs can
+  build the Windows-compatible sample paths.
+
+### Security
+
+- Update Vite and Vitest to patched releases, and refresh the development-only
+  Undici and Zod dependencies. The updated lockfile reports no known
+  vulnerabilities in `npm audit` as of 2026-10-29.
 
 ### Added
 
